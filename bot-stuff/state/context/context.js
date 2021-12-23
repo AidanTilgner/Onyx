@@ -18,16 +18,15 @@ class Context {
           ...state,
         }
       : { clientName: "dude" };
-    this.settings = settings
-      ? { prependInput: "->> ", prependOutput: "-<< ", ...settings }
-      : { prependInput: "->> ", prependOutput: "-<< " };
+    this.settings = settings;
     this.time = new Time(this.state, this.settings);
     this.names = new Names(this.state, this.settings);
   }
 
   // * Startup
   init() {
-    this.state = { ...this.state, ...this.readFromContextStorage() };
+    if (this.confirmContextStorage())
+      this.state = { ...this.state, ...this.readFromContextStorage() };
   }
 
   // * Helper Methods to Work with Input Types
@@ -77,6 +76,11 @@ class Context {
   };
 
   // * Methods to work with Persistant Storage
+  confirmContextStorage() {
+    if (readFileSync(path.resolve(__dirname, "../context.json"))) return true;
+    return false;
+  }
+
   readFromContextStorage() {
     // TODO: Make take in a file name and path?
     return JSON.parse(readFileSync(path.resolve(__dirname, "../context.json")));

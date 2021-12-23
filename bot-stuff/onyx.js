@@ -1,6 +1,7 @@
 // Classes
 import Router from "./classes/router.js";
 import Context from "./state/context/context.js";
+import Settings from "./state/settings/settings.js";
 import Command from "./helpers/commands/command.js";
 
 // Path
@@ -16,12 +17,20 @@ class Onyx {
       ? new Context({ clientName: "dude", env: process.env, ...state })
       : new Context({ clientName: "dude", env: process.env });
     this.settings = settings
-      ? { prependInput: "->> ", prependOutput: "-<< ", ...settings }
-      : { prependInput: "->> ", prependOutput: "-<< " };
+      ? new Settings(this.context, {
+          prependInput: "->> ",
+          prependOutput: "-<< ",
+          ...settings,
+        })
+      : new Settings(this.context, {
+          prependInput: "->> ",
+          prependOutput: "-<< ",
+        });
     this.router = new Router(this.context, this.settings);
     this.command = new Command(this.context, this.settings);
 
     this.context.init();
+    this.settings.init();
   }
 
   start() {
@@ -29,7 +38,7 @@ class Onyx {
 
     console.log(`Welcome ${this.context.state.clientName}...\n`);
     let getInput = () => {
-      RL.question(this.settings.prependInput, async (res) => {
+      RL.question(this.settings.state.prependInput, async (res) => {
         if (
           res.toLowerCase() === "exit" ||
           res.toLowerCase() === "quit" ||
@@ -60,7 +69,7 @@ class Onyx {
   }
 
   output(output) {
-    console.log(this.settings.prependOutput + output);
+    console.log(this.settings.state.prependOutput + output);
   }
 }
 

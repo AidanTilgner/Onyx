@@ -26,34 +26,38 @@ class Router {
 
   match(input) {
     if (!input) {
-      this.output(this.settings.prependOutput + res.promptUserToSaySomething());
+      this.output(
+        this.settings.state.prependOutput + res.promptUserToSaySomething()
+      );
       return;
     }
 
     if (this.recog.isGreeting(input)) {
       this.output(
-        this.settings.prependOutput +
+        this.settings.state.prependOutput +
           this.res.buildGreeting(this.context.state.clientName)
       );
       return;
     }
 
     if (this.recog.generalKenobi(input)) {
-      this.output(this.settings.prependOutput + this.res.generalKenobi());
+      this.output(this.settings.state.prependOutput + this.res.generalKenobi());
       return;
     }
 
     if (this.recog.timeQuery(input)) {
-      this.output(this.settings.prependOutput + this.res.currentTime(input));
+      this.output(
+        this.settings.state.prependOutput + this.res.currentTime(input)
+      );
       return;
     }
 
     if (this.recog.isThankful(input)) {
-      this.output(this.settings.prependOutput + this.res.myPleasure());
+      this.output(this.settings.state.prependOutput + this.res.myPleasure());
       return;
     }
 
-    this.output(this.settings.prependOutput + this.res.dontUnderstand());
+    this.output(this.settings.state.prependOutput + this.res.dontUnderstand());
   }
 
   output(output) {
