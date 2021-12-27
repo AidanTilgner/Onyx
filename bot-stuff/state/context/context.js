@@ -77,7 +77,10 @@ class Context {
 
   // * Methods to work with Persistant Storage
   confirmContextStorage() {
-    if (readFileSync(path.resolve(__dirname, "../context.json"))) return true;
+    if (
+      !Buffer.isBuffer(readFileSync(path.resolve(__dirname, "../context.json")))
+    )
+      return true;
     return false;
   }
 
