@@ -25,7 +25,7 @@ class Time {
   };
 
   getTimeOfDay = (timeString) => {
-    let hour = timeString.split(":")[0];
+    let hour = timeString.split(":")[0].split(" ")[1];
 
     // Late night: 0-3
     if ((hour >= 0 && hour <= 3) || hour === "24") {
@@ -57,6 +57,8 @@ class Time {
       return "night";
     }
   };
+
+  startTimer = () => {};
 }
 
 export default Time;

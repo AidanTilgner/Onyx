@@ -16,7 +16,6 @@ class Settings {
   init() {
     if (this.confirmSettingsStorage())
       this.state = { ...this.state, ...this.readFromSettingsStorage() };
-    console.log("Settings: ", this.state);
   }
 
   updateContext(context) {
@@ -25,10 +24,6 @@ class Settings {
 
   // * Methods to work with Persistant Storage
   confirmSettingsStorage() {
-    console.log(
-      "Settings Storage: ",
-      Buffer.isBuffer(readFileSync(path.resolve(__dirname, "../settings.json")))
-    );
     if (
       !Buffer.isBuffer(
         readFileSync(path.resolve(__dirname, "../settings.json"))

@@ -25,8 +25,10 @@ class Context {
 
   // * Startup
   init() {
+    this.updateTime();
+
     if (this.confirmContextStorage())
-      this.state = { ...this.state, ...this.readFromContextStorage() };
+      this.state = { ...this.readFromContextStorage(), ...this.state };
   }
 
   // * Helper Methods to Work with Input Types
@@ -54,6 +56,9 @@ class Context {
       this.updateTime();
     }
 
+    this.updateTime();
+    this.writeToContextStorage(this.state);
+
     return contextExists;
   }
 
@@ -63,7 +68,6 @@ class Context {
       ...(this.state.people ? this.state.people : []),
       ...people,
     ];
-    this.writeToContextStorage(this.state);
     if (this.state.people) return true;
     return false;
   }
@@ -73,20 +77,27 @@ class Context {
     this.state.timeOfDay = this.time.getTimeOfDay(
       this.time.getDateTimeString()
     );
+    if (this.state.currentTime && this.state.timeOfDay) return true;
+    return false;
   };
 
   // * Methods to work with Persistant Storage
   confirmContextStorage() {
     if (
-      !Buffer.isBuffer(readFileSync(path.resolve(__dirname, "../context.json")))
+      !Buffer.isBuffer(
+        readFileSync(path.resolve(__dirname, "../context.json"), "utf-8")
+      )
     )
       return true;
+
     return false;
   }
 
   readFromContextStorage() {
     // TODO: Make take in a file name and path?
-    return JSON.parse(readFileSync(path.resolve(__dirname, "../context.json")));
+    return JSON.parse(
+      readFileSync(path.resolve(__dirname, "../context.json"), "utf-8")
+    );
   }
 
   writeToContextStorage(context) {

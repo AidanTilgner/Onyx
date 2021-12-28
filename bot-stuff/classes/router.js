@@ -19,49 +19,53 @@ class Router {
     this.context = context;
   }
 
-  takeInput(input) {
+  async takeInput(input) {
     this.input = input;
-    this.match(this.input);
+    await this.match(this.input);
   }
 
-  match(input) {
+  async match(input) {
     if (!input) {
-      this.output(
-        this.settings.state.prependOutput + res.promptUserToSaySomething()
-      );
+      this.output(res.promptUserToSaySomething());
       return;
     }
 
     if (this.recog.isGreeting(input)) {
-      this.output(
-        this.settings.state.prependOutput +
-          this.res.buildGreeting(this.context.state.clientName)
-      );
+      this.output(this.res.buildGreeting(this.context.state.clientName));
       return;
     }
 
     if (this.recog.generalKenobi(input)) {
-      this.output(this.settings.state.prependOutput + this.res.generalKenobi());
+      this.output(this.res.generalKenobi());
       return;
     }
 
     if (this.recog.timeQuery(input)) {
-      this.output(
-        this.settings.state.prependOutput + this.res.currentTime(input)
-      );
+      this.output(this.res.currentTime(input));
+      return;
+    }
+
+    if (this.recog.isWeatherQuery(input)) {
+      await this.outputAsync(this.res.describeWeather(input));
       return;
     }
 
     if (this.recog.isThankful(input)) {
-      this.output(this.settings.state.prependOutput + this.res.myPleasure());
+      this.output(this.res.myPleasure());
       return;
     }
 
-    this.output(this.settings.state.prependOutput + this.res.dontUnderstand());
+    this.output(this.res.dontUnderstand());
   }
 
   output(output) {
-    console.log(output);
+    console.log(this.settings.state.prependOutput + output);
+    return true;
+  }
+
+  async outputAsync(output) {
+    console.log(this.settings.state.prependOutput + (await output));
+    return true;
   }
 }
 

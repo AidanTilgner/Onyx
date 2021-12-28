@@ -1,7 +1,10 @@
+import Weather from "../../helpers/types/weather.js";
+
 class Recognize {
   constructor(context, settings) {
     this.context = context;
     this.settings = settings;
+    this.weather = new Weather(this.context, this.settings);
   }
 
   // * Methods simply for classful functionality
@@ -11,7 +14,9 @@ class Recognize {
 
   splitInput(input) {
     return (input = input
-      .toLowerCase() // normalize all the data
+      .toLowerCase()
+      .replace(".", "")
+      .replace(",", "") // normalize all the data
       .split(" ")); // Split the input into an array of words
   }
 
@@ -32,11 +37,13 @@ class Recognize {
   }
 
   isThankful(input) {
-    let words = this.splitInput(input);
+    input = input.toLowerCase();
     if (
-      words.includes("thank") ||
-      words.includes("thanks") ||
-      words.includes("thank you")
+      input.match(/thank/) ||
+      input.match(/thanks/) ||
+      input.match(/thank you/) ||
+      input.match(/gracias/) ||
+      input.match(/grazie/)
     ) {
       return true;
     }
@@ -62,15 +69,8 @@ class Recognize {
     return false;
   }
 
-  weatherQuery(input) {
-    // TODO: Add more types of weather queries
-    // If the input asks about the current weather, return true
-    if (
-      this.splitInput(input).includes("what") &&
-      this.splitInput(input).includes("weather")
-    ) {
-      return true;
-    }
+  isWeatherQuery(input) {
+    if (this.weather.isWeatherQuery(input)) return true;
     return false;
   }
 }

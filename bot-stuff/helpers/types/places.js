@@ -36,13 +36,11 @@ class Places {
       )
     ).then((res) => res.json());
 
-    console.log(place);
-    console.log(process.env.PERSONAL_GOOGLE_API_KEY);
-
-    console.log(await place.results[0].formatted_address);
-
     return (await place.results[0])
-      ? place.results[0].geometry.location
+      ? {
+          lat: place.results[0].geometry.location.lat,
+          lon: place.results[0].geometry.location.lng,
+        }
       : "No results found";
   }
 
@@ -62,15 +60,5 @@ class Places {
       : "No results found";
   }
 }
-
-const test = new Places({
-  state: {
-    env: {
-      PERSONAL_GOOGLE_API_KEY: process.env.PERSONAL_GOOGLE_API_KEY,
-    },
-  },
-});
-
-test.getCoordinatesByAddress("1600 Amphitheatre Parkway, Mountain View, CA");
 
 export default Places;

@@ -43,19 +43,21 @@ class Onyx {
           res.toLowerCase() === "exit" ||
           res.toLowerCase() === "quit" ||
           res.toLowerCase() === "bye" ||
-          res.toLowerCase() === "goodbye"
+          res.toLowerCase() === "goodbye" ||
+          res.toLowerCase() === ";'"
         ) {
           console.log(`Bye ${this.context.state.clientName}!`);
           return RL.close();
         }
 
-        if (this.context.checkForContext(res))
+        if (this.context.checkForContext(res)) {
           this.router.updateAllContext(this.context);
+        }
 
         if (this.command.isCommand(res)) {
           this.output(await this.command.fulfill(res));
         } else {
-          this.router.takeInput(res);
+          await this.router.takeInput(res);
         }
 
         getInput();

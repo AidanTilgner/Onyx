@@ -1,7 +1,9 @@
+import Weather from "../../helpers/types/weather.js";
 class Response {
   constructor(context, settings) {
     this.context = context;
     this.settings = settings;
+    this.weather = new Weather(this.context, this.settings);
   }
 
   updateContext(context) {
@@ -40,6 +42,10 @@ class Response {
 
   currentTime = () => {
     return `It is ${this.context.state.timeOfDay}, ${this.context.state.currentTime}`;
+  };
+
+  describeWeather = async (input) => {
+    return await this.weather.routeWeatherQuery(input);
   };
 
   myPleasure = () => {
