@@ -79,12 +79,28 @@ class Weather {
     input = input.toLowerCase();
 
     if (input.match(/what is/i)) {
-      if (input.match(/in/))
+      if (input.match(/ in /)) {
+        if (input.match(/ full /i))
+          return this.fullWeatherReport(
+            await this.getWeather(
+              await this.places.getCoordinatesByAddress(
+                input.match(/in (.*)/i)[1]
+              )
+            )
+          );
         return this.describeCurrentWeather(
           await this.getWeather(
             await this.places.getCoordinatesByAddress(
               input.match(/in (.*)/i)[1]
             )
+          )
+        );
+      }
+      if (input.match(/ full /i))
+        return this.fullWeatherReport(
+          await this.getWeather(
+            this.context.state.places.find((place) => place.type === "home")
+              .coords
           )
         );
       return this.describeCurrentWeather(
@@ -116,6 +132,30 @@ class Weather {
   }
 
   // Weather Query Handlers
+  async getWeather(coords) {
+    return await fetch(
+      `https://api.openweathermap.org/data/2.5/onecall?lat=${coords.lat}&lon=${coords.lon}&units=imperial&appid=${this.context.state.env.PERSONAL_OPEN_WEATHER_API_KEY}`
+    ).then((res) => res.json());
+  }
+
+  fullWeatherReport(weather) {
+    return `It is currently ${Math.floor(
+      weather.current.temp
+    )} degrees Fahrenheit. There ${
+      weather.current.weather[
+        weather.current.weather.length - 1
+      ].description.match(/s$/i)
+        ? "are"
+        : "is"
+    } ${weather.current.weather
+      .map((weather) => weather.description)
+      .join(", ")}. The high today is ${Math.floor(
+      Math.max(...weather.hourly.map((hour) => hour.temp))
+    )} degrees Fahrenheit with a low of ${Math.floor(
+      Math.min(...weather.hourly.map((hour) => hour.temp))
+    )} degrees Fahrenheit.`;
+  }
+
   describeCurrentWeather(weather) {
     return `It is currently ${Math.floor(
       weather.current.temp
@@ -138,15 +178,9 @@ class Weather {
         )
       )
     ) {
-      return `Yes, it is ${verb}`;
+      return `Yes, it is ${verb.replace("?", "")}`;
     }
-    return `No, it is not ${verb}`;
-  }
-
-  async getWeather(coords) {
-    return await fetch(
-      `https://api.openweathermap.org/data/2.5/onecall?lat=${coords.lat}&lon=${coords.lon}&units=imperial&appid=${this.context.state.env.PERSONAL_OPEN_WEATHER_API_KEY}`
-    ).then((res) => res.json());
+    return `No, it is not ${verb.replace("?", "")}`;
   }
 }
 

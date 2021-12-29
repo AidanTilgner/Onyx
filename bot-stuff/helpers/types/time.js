@@ -4,6 +4,7 @@ class Time {
     this.settings = settings;
   }
 
+  // Functional Methods
   updateContext(context) {
     this.context = context;
   }
@@ -19,6 +20,22 @@ class Time {
     return words;
   }
 
+  // Detects Time Queries
+  isTimeQuery(input) {
+    input = input.toLowerCase();
+    if (input.match(/^(?=.*what)(?=.*time).*$/i)) return true;
+    return false;
+  }
+
+  // Deciphers Time Queries
+  async routeTimeQuery(input) {
+    input = input.toLowerCase();
+    if (input.match(/what time/i)) {
+      return this.getTimeOfDay(this.getDateTimeString());
+    }
+  }
+
+  // Handles Time Queries
   getDateTimeString = () => {
     let date = new Date();
     return date.toLocaleString("en-US", { hour12: false });
@@ -58,7 +75,11 @@ class Time {
     }
   };
 
-  startTimer = () => {};
+  startTimer = (time) => {
+    this.timer = setInterval(() => {
+      this.context.sendText(this.getDateTimeString());
+    }, time);
+  };
 }
 
 export default Time;

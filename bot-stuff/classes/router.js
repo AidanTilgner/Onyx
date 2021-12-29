@@ -41,7 +41,7 @@ class Router {
     }
 
     if (this.recog.timeQuery(input)) {
-      this.output(this.res.currentTime(input));
+      await this.outputAsync(this.res.handleTime(input));
       return;
     }
 

@@ -63,6 +63,12 @@ class Context {
   }
 
   // * Methods to Update Context
+  onInput(input) {
+    this.updateTime();
+    this.addToInputHistory(input);
+    this.writeToContextStorage(this.state);
+  }
+
   updatePeople(people) {
     this.state.people = [
       ...(this.state.people ? this.state.people : []),
@@ -80,6 +86,13 @@ class Context {
     if (this.state.currentTime && this.state.timeOfDay) return true;
     return false;
   };
+
+  addToInputHistory(input) {
+    this.state.inputHistory.push(input);
+
+    if (this.state.inputHistory) return true;
+    return false;
+  }
 
   // * Methods to work with Persistant Storage
   confirmContextStorage() {

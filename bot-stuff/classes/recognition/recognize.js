@@ -1,10 +1,12 @@
 import Weather from "../../helpers/types/weather.js";
+import Time from "../../helpers/types/time.js";
 
 class Recognize {
   constructor(context, settings) {
     this.context = context;
     this.settings = settings;
     this.weather = new Weather(this.context, this.settings);
+    this.time = new Time(this.context, this.settings);
   }
 
   // * Methods simply for classful functionality
@@ -58,14 +60,7 @@ class Recognize {
   }
 
   timeQuery(input) {
-    // TODO: Add more types of time queries
-    // If the input asks about the current time, return true
-    if (
-      this.splitInput(input).includes("what") &&
-      this.splitInput(input).includes("time")
-    ) {
-      return true;
-    }
+    if (this.time.isTimeQuery(input)) return true;
     return false;
   }
 

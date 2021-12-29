@@ -60,6 +60,8 @@ class Onyx {
           await this.router.takeInput(res);
         }
 
+        this.context.onInput(res);
+        this.router.updateAllContext(this.context);
         getInput();
       });
     };
