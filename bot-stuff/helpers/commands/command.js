@@ -37,6 +37,21 @@ class Command {
   }
 
   // * Command Methods
+  delete_input_history() {
+    this.context.deleteInputHistory();
+    return "Deleted input history";
+  }
+
+  remove_from_input_history([input, cs]) {
+    if (cs) cs = cs.toLowerCase() === "true" ? true : false;
+    this.context.removeFromInputHistory(input, cs);
+    return `Removed "${input}" from input history`;
+  }
+
+  output_input_history() {
+    return `Input history: \n${this.context.state.inputHistory.join(", \n")}`;
+  }
+
   say_hello() {
     console.log("Hello");
     return "Hello";

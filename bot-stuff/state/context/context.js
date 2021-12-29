@@ -88,8 +88,27 @@ class Context {
   };
 
   addToInputHistory(input) {
+    if (input.match(/input_history/i)) return;
     this.state.inputHistory.push(input);
 
+    if (this.state.inputHistory) return true;
+    return false;
+  }
+
+  removeFromInputHistory(input, cs) {
+    if (!cs) input = input.toLowerCase();
+
+    this.state.inputHistory = this.state.inputHistory.filter(
+      (i) => (cs ? i : i.toLowerCase()) !== input
+    );
+    this.writeToContextStorage(this.state);
+    if (this.state.inputHistory) return true;
+    return false;
+  }
+
+  deleteInputHistory() {
+    this.state.inputHistory = [];
+    this.writeToContextStorage(this.state);
     if (this.state.inputHistory) return true;
     return false;
   }
