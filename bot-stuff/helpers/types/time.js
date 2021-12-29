@@ -2,6 +2,12 @@ class Time {
   constructor(context, settings) {
     this.context = context;
     this.settings = settings;
+    this.intervals = [
+      { name: "seconds", milliseconds: 1000 },
+      { name: "minutes", milliseconds: 60000 },
+      { name: "hours", milliseconds: 3600000 },
+      { name: "days", milliseconds: 86400000 },
+    ];
   }
 
   // Functional Methods
@@ -23,7 +29,11 @@ class Time {
   // Detects Time Queries
   isTimeQuery(input) {
     input = input.toLowerCase();
-    if (input.match(/^(?=.*what)(?=.*time).*$/i)) return true;
+    if (
+      input.match(/^(?=.*what)(?=.*time).*$/i) ||
+      input.match(/^(?=.*start)(?=.*timer)(?=.*for).*$/i)
+    )
+      return true;
     return false;
   }
 
@@ -31,7 +41,20 @@ class Time {
   async routeTimeQuery(input) {
     input = input.toLowerCase();
     if (input.match(/what time/i)) {
-      return this.getTimeOfDay(this.getDateTimeString());
+      return (
+        "It is " +
+        this.getTimeOfDay(this.getDateTimeString()) +
+        ". Exactly " +
+        this.getDateTimeString() +
+        "."
+      );
+    }
+    if (input.match(/timer/i)) {
+      let units = input.match(/ \d* (.*)/im)[1];
+      let amount = input.match(/ \d* /im);
+      // Convert the amount to the proper amount of milliseconds based on the units
+      await this.startTimer(amount, units);
+      return "Timer ended.";
     }
   }
 
@@ -75,10 +98,23 @@ class Time {
     }
   };
 
-  startTimer = (time) => {
-    this.timer = setInterval(() => {
-      this.context.sendText(this.getDateTimeString());
-    }, time);
+  startTimer = async (amount, units) => {
+    return new Promise((resolve) => {
+      console.log("Starting timer for " + amount + " " + units);
+      amount = units.match(/hour/i)
+        ? amount * 3600
+        : units.match(/minute/i)
+        ? amount * 60
+        : amount;
+      console.log("Amount in Seconds: " + amount);
+      this.timer = setInterval(() => {
+        console.log(--amount);
+        if (amount === 0) {
+          clearInterval(this.timer);
+          resolve();
+        }
+      }, this.intervals.find((interval) => interval.name === "seconds").milliseconds);
+    });
   };
 }
 
