@@ -35,6 +35,7 @@ class Response {
 
     let res = resList[Math.floor(Math.random() * resList.length)];
 
+    console.log("Building response");
     return res;
   };
 

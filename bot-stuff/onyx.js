@@ -11,6 +11,10 @@ import { stdin as input, stdout as output } from "process";
 // Initialize .env
 import dotenv from "dotenv";
 dotenv.config();
+
+// Express
+import express from "express";
+
 class Onyx {
   constructor(state, settings) {
     this.context = state
@@ -33,7 +37,7 @@ class Onyx {
     this.settings.init();
   }
 
-  start() {
+  commandLine() {
     const RL = readline.createInterface({ input, output });
 
     console.log(`Welcome ${this.context.state.clientName}...\n`);
@@ -66,6 +70,39 @@ class Onyx {
       });
     };
     getInput();
+  }
+
+  server(port) {
+    const app = express();
+
+    const wrapAsync = (fn) => {
+      return (req, res, next) => {
+        const fnReturn = fn(req, res, next);
+        return Promise.resolve(fnReturn).catch(next);
+      };
+    };
+
+    app.get(
+      "/input",
+      wrapAsync(async (req, res) => {
+        console.log(req.query);
+        let input = req.query.input;
+        if (this.context.checkForContext(input)) {
+          this.router.updateAllContext(this.context);
+        }
+
+        this.context.onInput(input);
+        this.router.updateAllContext(this.context);
+
+        if (this.command.isCommand(input)) {
+          res.send(await this.command.fulfill(res));
+        } else {
+          res.send(await this.router.takeInput(input));
+        }
+      })
+    );
+
+    app.listen(port, () => console.log(`Listening on port ${port}`));
   }
 
   updateContext(context) {

@@ -21,51 +21,50 @@ class Router {
 
   async takeInput(input) {
     this.input = input;
-    await this.match(this.input);
+    return await this.match(this.input);
   }
 
   async match(input) {
     if (!input) {
-      this.output(res.promptUserToSaySomething());
-      return;
+      return this.output(res.promptUserToSaySomething());
     }
 
     if (this.recog.isGreeting(input)) {
-      this.output(this.res.buildGreeting(this.context.state.clientName));
-      return;
+      console.log("Is greeting");
+      console.log(
+        "Returning: ",
+        this.res.buildGreeting(this.context.state.clientName)
+      );
+      return this.output(this.res.buildGreeting(this.context.state.clientName));
     }
 
     if (this.recog.generalKenobi(input)) {
-      this.output(this.res.generalKenobi());
-      return;
+      return this.output(this.res.generalKenobi());
     }
 
     if (this.recog.timeQuery(input)) {
-      await this.outputAsync(this.res.handleTime(input));
-      return;
+      return await this.outputAsync(this.res.handleTime(input));
     }
 
     if (this.recog.isWeatherQuery(input)) {
-      await this.outputAsync(this.res.describeWeather(input));
-      return;
+      return await this.outputAsync(this.res.describeWeather(input));
     }
 
     if (this.recog.isThankful(input)) {
-      this.output(this.res.myPleasure());
-      return;
+      return this.output(this.res.myPleasure());
     }
 
-    this.output(this.res.dontUnderstand());
+    return this.output(this.res.dontUnderstand());
   }
 
   output(output) {
     console.log(this.settings.state.prependOutput + output);
-    return true;
+    return output;
   }
 
   async outputAsync(output) {
     console.log(this.settings.state.prependOutput + (await output));
-    return true;
+    return output;
   }
 }
 

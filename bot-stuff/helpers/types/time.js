@@ -44,8 +44,8 @@ class Time {
       return (
         "It is " +
         this.getTimeOfDay(this.getDateTimeString()) +
-        ". Exactly " +
-        this.getDateTimeString() +
+        ", " +
+        this.getDateTimeString().split(" ")[1] +
         "."
       );
     }
@@ -100,15 +100,14 @@ class Time {
 
   startTimer = async (amount, units) => {
     return new Promise((resolve) => {
-      console.log("Starting timer for " + amount + " " + units);
+      console.log("Starting timer for" + amount + units);
       amount = units.match(/hour/i)
         ? amount * 3600
         : units.match(/minute/i)
         ? amount * 60
         : amount;
-      console.log("Amount in Seconds: " + amount);
       this.timer = setInterval(() => {
-        console.log(--amount);
+        --amount;
         if (amount === 0) {
           clearInterval(this.timer);
           resolve();
