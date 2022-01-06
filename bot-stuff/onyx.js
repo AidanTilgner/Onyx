@@ -102,7 +102,7 @@ class Onyx {
       })
     );
 
-    app.listen(port, () => console.log(`Listening on port ${port}`));
+    app.listen(port, () => console.log(`Onyx listening on port ${port}`));
   }
 
   updateContext(context) {

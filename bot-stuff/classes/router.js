@@ -7,6 +7,34 @@ class Router {
     this.settings = settings ? settings : {};
     this.recog = new Recognize(this.context, settings);
     this.res = new Response(this.context, settings);
+
+    this.routes = [
+      {
+        recognizer: "isGreeting",
+        response: "buildGreeting",
+        isAsync: false,
+      },
+      {
+        recognizer: "generalKenobi",
+        response: "generalKenobi",
+        isAsync: false,
+      },
+      {
+        recognizer: "timeQuery",
+        response: "handleTime",
+        isAsync: true,
+      },
+      {
+        recognizer: "isWeatherQuery",
+        response: "describeWeather",
+        isAsync: true,
+      },
+      {
+        recognizer: "isThankful",
+        response: "myPleasure",
+        isAsync: false,
+      },
+    ];
   }
 
   updateAllContext(context) {
@@ -25,16 +53,25 @@ class Router {
   }
 
   async match(input) {
+    if (!input) return this.output(res.promptUserToSaySomething());
+
+    for (let i = 0; i < this.routes.length; i++) {
+      let route = this.routes[i];
+      if (this.recog[route.recognizer](input)) {
+        if (route.isAsync)
+          return await this.outputAsync(this.res[route.response](input));
+        return this.output(this.res[route.response](input));
+      }
+    }
+  }
+
+  async oldMatch(input) {
+    // ! DEPRECATED, now refer to match() function
     if (!input) {
       return this.output(res.promptUserToSaySomething());
     }
 
     if (this.recog.isGreeting(input)) {
-      console.log("Is greeting");
-      console.log(
-        "Returning: ",
-        this.res.buildGreeting(this.context.state.clientName)
-      );
       return this.output(this.res.buildGreeting(this.context.state.clientName));
     }
 
@@ -64,7 +101,7 @@ class Router {
 
   async outputAsync(output) {
     console.log(this.settings.state.prependOutput + (await output));
-    return output;
+    return await output;
   }
 }
 

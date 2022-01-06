@@ -20,22 +20,21 @@ class Response {
     return "I'm sorry, I don't understand";
   }
 
-  buildGreeting = (clientName) => {
+  buildGreeting = () => {
     let resList = [
-      `Hey ${clientName}, my name's Onyx`,
-      `Hey ${clientName}, how are you today?`,
+      `Hey ${this.context.state.clientName}, my name's Onyx`,
+      `Hey ${this.context.state.clientName}, how are you today?`,
       `Hey there, how has your day been so far?`,
       `Hey cutie, you're looking fresh today ;)`,
       `Hey`,
       `Hello`,
       `Ciao, that's hello in italian`,
       `Bonjour!..Heh heh, pardon my french`,
-      `Hey ${clientName}, what are you up to today?`,
+      `Hey ${this.context.state.clientName}, what are you up to today?`,
     ];
 
     let res = resList[Math.floor(Math.random() * resList.length)];
 
-    console.log("Building response");
     return res;
   };
 
